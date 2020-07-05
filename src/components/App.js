@@ -1,5 +1,6 @@
 import React from 'react'
-
+// import './fetch-setup';
+// import { getAll, getByType } from '.src/data/pets.js';
 import Filters from './Filters'
 import PetBrowser from './PetBrowser'
 
@@ -15,6 +16,39 @@ class App extends React.Component {
     }
   }
 
+
+  updateFilterType = (e) => {
+    const val = e.target.value
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        filters: {
+          type: val
+        }
+      }
+    })
+  }
+
+  findPetsClick = (e) => {
+    const filterType = this.state.filters.type
+    let url = '/api/pets'
+    
+    if (filterType !== 'all') {
+      url += `?type=${filterType}`
+    } 
+    debugger
+  }
+
+  handleAdoptPet = (id) => {
+    this.setState(prevState => {
+      const pet = prevState.pets.find(pet => pet.id === id)
+      return {
+        ...prevState,
+        pets: []
+      }
+    })
+  }
+
   render() {
     return (
       <div className="ui container">
@@ -24,10 +58,12 @@ class App extends React.Component {
         <div className="ui container">
           <div className="ui grid">
             <div className="four wide column">
-              <Filters />
+              <Filters 
+              onChangeType={(e) => this.updateFilterType(e)}
+              onFindPetsClick={(e) => this.findPetsClick(e)}/>
             </div>
             <div className="twelve wide column">
-              <PetBrowser />
+              <PetBrowser onAdoptPet={(id) => this.handleAdoptPet(id)}/>
             </div>
           </div>
         </div>
