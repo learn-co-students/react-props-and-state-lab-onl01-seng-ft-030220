@@ -1,6 +1,4 @@
 import React from 'react'
-// import './fetch-setup';
-// import { getAll, getByType } from '.src/data/pets.js';
 import Filters from './Filters'
 import PetBrowser from './PetBrowser'
 
@@ -36,15 +34,24 @@ class App extends React.Component {
     if (filterType !== 'all') {
       url += `?type=${filterType}`
     } 
-    debugger
+    fetch(url)
+    .then(resp => resp.json())
+    .then(data => {
+      this.setState(prevState => {
+        return {
+          ...prevState,
+          pets: data
+        }
+      })
+    })
   }
 
   handleAdoptPet = (id) => {
     this.setState(prevState => {
       const pet = prevState.pets.find(pet => pet.id === id)
+      pet.isAdopted = true
       return {
-        ...prevState,
-        pets: []
+        ...prevState
       }
     })
   }
@@ -59,11 +66,11 @@ class App extends React.Component {
           <div className="ui grid">
             <div className="four wide column">
               <Filters 
-              onChangeType={(e) => this.updateFilterType(e)}
-              onFindPetsClick={(e) => this.findPetsClick(e)}/>
+              onChangeType={this.updateFilterType}
+              onFindPetsClick={this.findPetsClick}/>
             </div>
             <div className="twelve wide column">
-              <PetBrowser onAdoptPet={(id) => this.handleAdoptPet(id)}/>
+              <PetBrowser onAdoptPet={this.handleAdoptPet} pets={this.state.pets}/>
             </div>
           </div>
         </div>
